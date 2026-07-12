@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 
-const API = 'http://localhost:3000/api';
+const API = 'https://expenense-tracker-backend.onrender.com/api';
 
 export interface Transaction {
   _id: string;

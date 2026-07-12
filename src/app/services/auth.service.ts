@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
-const API = 'http://localhost:3000/api';
+const API = 'https://expenense-tracker-backend.onrender.com/api';
 
 export interface LoginPayload { email: string; password: string; }
 export interface RegisterPayload { email: string; password: string; name?: string; currency?: string; }
