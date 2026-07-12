@@ -1,0 +1,25 @@
+﻿<!-- Global Toast Notifications -->
+<app-toast></app-toast>
+
+@if (isLoggedIn) {
+  <app-navbar (toggleSidebar)="onToggleSidebar()" (openProfile)="openProfile()"></app-navbar>
+  <app-sidebar [isOpen]="sidebarOpen"></app-sidebar>
+  <main class="main-content" [class.sidebar-open]="sidebarOpen">
+    <router-outlet></router-outlet>
+  </main>
+
+  @if (profileOpen) {
+    <div class="profile-drawer-backdrop" (click)="closeProfile()"></div>
+    <aside class="profile-drawer" aria-label="Profile settings">
+      <button class="profile-drawer-close btn btn-ghost btn-icon" type="button" (click)="closeProfile()" title="Close profile">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <app-profile [drawerMode]="true" (closeProfile)="closeProfile()"></app-profile>
+    </aside>
+  }
+} @else {
+  <router-outlet></router-outlet>
+}

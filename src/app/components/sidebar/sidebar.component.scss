@@ -1,0 +1,124 @@
+﻿.sidebar {
+  position: fixed;
+  left: 0;
+  top: var(--navbar-height);
+  bottom: 0;
+  width: var(--sidebar-width);
+  background: var(--bg-base);
+  border-right: 1px solid var(--border-dim);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+  z-index: 900;
+  transition: transform var(--ease-md);
+  overflow-y: auto;
+
+  &.sidebar-closed { transform: translateX(-100%); }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 0 8px;
+    flex: 1;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 9px 12px;
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: 0.84rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all var(--ease);
+    position: relative;
+
+    &:hover {
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+
+    &.active {
+      color: var(--text-primary);
+      background: var(--bg-active);
+      font-weight: 600;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 20%;
+        bottom: 20%;
+        width: 2px;
+        background: var(--text-primary);
+        border-radius: 0 2px 2px 0;
+      }
+    }
+  }
+
+  .sidebar-footer {
+    padding: 12px 18px 0;
+    border-top: 1px solid var(--border-dim);
+    margin-top: 12px;
+
+    .app-version {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+  }
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  top: var(--navbar-height);
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 850;
+
+  @media (max-width: 767px) { &.active { display: block; } }
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-top: 1px solid var(--border-dim);
+    padding: 6px 0;
+    transform: none !important;
+
+    &.sidebar-closed { transform: none !important; }
+
+    .sidebar-nav {
+      flex-direction: row;
+      justify-content: space-around;
+      padding: 0 4px;
+    }
+
+    .nav-item {
+      flex: 1;
+      justify-content: center;
+      min-width: 0;
+      padding: 9px 4px;
+      font-size: 0.64rem;
+      text-align: center;
+
+      &.active::before { display: none; }
+    }
+
+    .nav-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .sidebar-footer { display: none; }
+  }
+}

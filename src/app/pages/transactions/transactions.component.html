@@ -1,0 +1,167 @@
+﻿<div class="transactions-page">
+  <!-- Header -->
+  <div class="page-header animate-in">
+    <div>
+      <h1 class="page-title">Transactions</h1>
+      <p class="page-subtitle">All your financial activity in one place</p>
+    </div>
+    <div class="header-actions">
+      <select class="form-control" [(ngModel)]="selectedMonth" (ngModelChange)="onMonthChange()" id="tx-month-filter">
+        <option value="">All Time</option>
+        @for (month of months; track month) {
+          <option [value]="month">{{ month }}</option>
+        }
+      </select>
+      <a routerLink="/add-transaction/expense" class="btn btn-ghost" id="tx-add-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Add Transaction
+      </a>
+    </div>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar card animate-in" role="tablist">
+    <button class="tab-btn" [class.active]="activeTab === 'all'" (click)="setTab('all')" id="tab-all" role="tab">
+      All
+      <span class="tab-count">{{ income.length + expenses.length }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'income'" (click)="setTab('income')" id="tab-income" role="tab">
+      Income
+      <span class="tab-count income-count">{{ income.length }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'expense'" (click)="setTab('expense')" id="tab-expense" role="tab">
+      Expenses
+      <span class="tab-count expense-count">{{ expenses.length }}</span>
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner" style="width:32px;height:32px;border-width:2px;color:var(--text-muted)"></div>
+      <p>Fetching transactions...</p>
+    </div>
+  } @else {
+
+    <!-- Summary strip -->
+    @if (filteredTransactions.length > 0) {
+      <div class="summary-strip card animate-in">
+        <div class="strip-item">
+          <span class="strip-label">Count</span>
+          <span class="strip-value">{{ filteredTransactions.length }}</span>
+        </div>
+        @if (activeTab === 'all' || activeTab === 'income') {
+          <div class="strip-divider"></div>
+          <div class="strip-item">
+            <span class="strip-label">Income</span>
+            <span class="strip-value text-income">+{{ formatCurrency(totalIncome) }}</span>
+          </div>
+        }
+        @if (activeTab === 'all' || activeTab === 'expense') {
+          <div class="strip-divider"></div>
+          <div class="strip-item">
+            <span class="strip-label">Expenses</span>
+            <span class="strip-value text-expense">-{{ formatCurrency(totalExpenses) }}</span>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (filteredTransactions.length === 0) {
+      <div class="empty-state card animate-in">
+        <h3>No transactions found</h3>
+        <p>Try a different filter or add a new transaction</p>
+        <a routerLink="/add-transaction/expense" class="btn btn-primary mt-3">Add Transaction</a>
+      </div>
+    } @else {
+
+      <!-- List -->
+      <div class="tx-list card animate-in">
+        @for (tx of filteredTransactions; track tx._id; let last = $last) {
+          <div class="tx-row" id="tx-row-{{ tx._id }}">
+            <div class="tx-left">
+              <div class="tx-info">
+                <div class="tx-title">{{ tx.category }}</div>
+                <div class="tx-meta">{{ tx.description || 'No description' }}</div>
+              </div>
+            </div>
+
+            <div class="tx-center hide-mobile">
+              <span class="badge" [class.badge-income]="tx.expenseType === 'INCOME'" [class.badge-expense]="tx.expenseType === 'EXPENSE'">
+                {{ tx.expenseType }}
+              </span>
+            </div>
+
+            <div class="tx-date-col hide-mobile">{{ formatDate(tx.date) }}</div>
+
+            <div class="tx-right-col">
+              <div class="tx-amount" [class.text-income]="tx.expenseType === 'INCOME'" [class.text-expense]="tx.expenseType === 'EXPENSE'">
+                {{ tx.expenseType === 'INCOME' ? '+' : '-' }}{{ formatCurrency(tx.amount) }}
+              </div>
+              <div class="tx-date-mobile hide-desktop">{{ formatDate(tx.date) }}</div>
+            </div>
+
+            <div class="tx-actions">
+              <a [routerLink]="'/add-transaction/edit/' + tx._id" class="btn btn-ghost btn-icon" title="Edit" [id]="'edit-' + tx._id">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </a>
+              <button
+                class="btn btn-danger btn-icon"
+                (click)="openDeleteModal(tx)"
+                [disabled]="deleting === tx._id"
+                title="Delete"
+                [id]="'delete-' + tx._id">
+                @if (deleting === tx._id) {
+                  <span class="spinner" style="width:13px;height:13px"></span>
+                } @else {
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                  </svg>
+                }
+              </button>
+            </div>
+          </div>
+          @if (!last) { <div class="divider"></div> }
+        }
+      </div>
+    }
+  }
+</div>
+@if (transactionToDelete) {
+  <div class="modal-backdrop" (click)="closeDeleteModal()"></div>
+  <section class="delete-modal card" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+    <div class="modal-header">
+      <h2 id="delete-modal-title">Delete transaction?</h2>
+      <button class="btn btn-ghost btn-icon" type="button" (click)="closeDeleteModal()" [disabled]="!!deleting" title="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="modal-copy">
+      This will permanently delete <strong>{{ transactionToDelete.category }}</strong>
+      for <strong>{{ formatCurrency(transactionToDelete.amount) }}</strong>.
+    </p>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" type="button" (click)="closeDeleteModal()" [disabled]="!!deleting">Cancel</button>
+      <button class="btn btn-danger" type="button" (click)="confirmDelete()" [disabled]="!!deleting" id="confirm-delete-btn">
+        @if (deleting) {
+          <span class="spinner"></span>
+          Deleting...
+        } @else {
+          Delete
+        }
+      </button>
+    </div>
+  </section>
+}

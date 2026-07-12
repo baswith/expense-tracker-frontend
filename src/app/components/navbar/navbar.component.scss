@@ -1,0 +1,102 @@
+﻿.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  height: var(--navbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: var(--bg-base);
+  border-bottom: 1px solid var(--border-dim);
+
+  .navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .menu-btn {
+    color: var(--text-muted);
+    &:hover { color: var(--text-primary); }
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    .brand-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+  }
+
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px 4px 4px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+
+    &:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-strong);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 2px;
+    }
+
+    .user-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.72rem;
+      color: var(--text-primary);
+      flex-shrink: 0;
+    }
+
+    .user-email {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .logout-btn {
+    color: var(--text-muted);
+    &:hover { color: var(--text-primary); background: var(--bg-hover); }
+  }
+  @media (max-width: 767px) {
+    .menu-btn {
+      display: none;
+    }
+  }
+}
+
+

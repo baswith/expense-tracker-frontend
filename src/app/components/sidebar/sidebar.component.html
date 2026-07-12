@@ -1,0 +1,21 @@
+﻿<aside class="sidebar" [class.sidebar-closed]="!isOpen">
+  <nav class="sidebar-nav">
+    @for (item of navItems; track item.route) {
+      <a
+        class="nav-item"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [id]="'nav-' + item.label.toLowerCase().replace(' ', '-')">
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="app-version">FinTrack v1.0</div>
+  </div>
+</aside>
+
+<!-- Mobile overlay -->
+<div class="sidebar-overlay" [class.active]="isOpen" (click)="isOpen = false"></div>
+

@@ -1,0 +1,81 @@
+﻿<div class="profile-page" [class.drawer-mode]="drawerMode">
+  <div class="profile-card card animate-in">
+    <!-- Header -->
+    <div class="profile-header">
+      <h1 class="profile-title">Profile Settings</h1>
+      <p class="profile-subtitle">Update your personal account details and preferences</p>
+    </div>
+
+    @if (loadingData) {
+      <div class="loading-state">
+        <div class="spinner" style="width:28px;height:28px;border-width:2px;color:var(--text-muted)"></div>
+        <p>Loading profile...</p>
+      </div>
+    } @else {
+      <form (ngSubmit)="onSubmit()" id="profile-form">
+        <!-- Email (Read Only) -->
+        <div class="form-group">
+          <label class="form-label" for="profile-email">Email Address (Not Updatable)</label>
+          <input
+            id="profile-email"
+            type="email"
+            class="form-control"
+            [value]="email"
+            disabled
+            style="opacity: 0.6; cursor: not-allowed; background: var(--bg-surface);">
+        </div>
+
+        <!-- Name -->
+        <div class="form-group">
+          <label class="form-label" for="profile-name">Full Name</label>
+          <input
+            id="profile-name"
+            type="text"
+            class="form-control"
+            [(ngModel)]="name"
+            name="name"
+            placeholder="Your name"
+            required>
+        </div>
+
+        <!-- Currency -->
+        <div class="form-group">
+          <label class="form-label" for="profile-currency">Preferred Currency</label>
+          <select
+            id="profile-currency"
+            class="form-control"
+            [(ngModel)]="currency"
+            name="currency"
+            required>
+            @for (curr of currencies; track curr) {
+              <option [value]="curr">{{ curr }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          @if (drawerMode) {
+            <button type="button" class="btn btn-ghost" id="profile-cancel-btn" (click)="onCancel()">Cancel</button>
+          } @else {
+            <a routerLink="/dashboard" class="btn btn-ghost" id="profile-cancel-btn">Cancel</a>
+          }
+          <button
+            type="submit"
+            class="btn btn-primary btn-lg"
+            [disabled]="loading"
+            id="profile-submit-btn">
+            @if (loading) {
+              <span class="spinner"></span>
+              Saving...
+            } @else {
+              Save Changes
+            }
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>
+
+

@@ -1,0 +1,142 @@
+﻿<div class="dashboard">
+  <!-- Header -->
+  <div class="page-header animate-in">
+    <div class="header-text">
+      <h1 class="page-title">Good {{ getGreeting() }}, {{ userName }}</h1>
+      <p class="page-subtitle">Here's your financial overview</p>
+    </div>
+    <div class="header-controls">
+      <select class="form-control month-select" [(ngModel)]="selectedMonth" (ngModelChange)="onMonthChange()" id="month-filter">
+        <option value="">All Time</option>
+        @for (month of months; track month) {
+          <option [value]="month">{{ month }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner" style="width:32px;height:32px;border-width:2px;color:var(--text-muted)"></div>
+      <p>Loading your data...</p>
+    </div>
+  } @else {
+
+    <!-- Summary Cards -->
+    <div class="summary-grid animate-in">
+
+      <div class="summary-card card" id="balance-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="5" width="20" height="14" rx="2"/>
+              <line x1="2" y1="10" x2="22" y2="10"/>
+            </svg>
+          </div>
+          <span class="card-label">Net Balance</span>
+        </div>
+        <div class="card-amount" [class.positive]="balance >= 0" [class.negative]="balance < 0">
+          {{ formatCurrency(balance) }}
+        </div>
+        <div class="card-meta">
+          @if (savingsRate > 0) {
+            <span class="savings-badge">{{ savingsRate }}% saved</span>
+          } @else {
+            <span>{{ totalTransactions }} total transactions</span>
+          }
+        </div>
+      </div>
+
+      <div class="summary-card card" id="income-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 19V5M5 12l7-7 7 7"/>
+            </svg>
+          </div>
+          <span class="card-label">Total Income</span>
+        </div>
+        <div class="card-amount income-amount">{{ formatCurrency(totalIncome) }}</div>
+        <div class="card-meta">{{ income.length }} transactions</div>
+      </div>
+
+      <div class="summary-card card" id="expense-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+          </div>
+          <span class="card-label">Total Expenses</span>
+        </div>
+        <div class="card-amount expense-amount">{{ formatCurrency(totalExpenses) }}</div>
+        <div class="card-meta">{{ expenses.length }} transactions</div>
+      </div>
+    </div>
+
+    <!-- Budget bar -->
+    @if (totalIncome > 0) {
+      <div class="budget-bar-section card animate-in" id="budget-bar">
+        <div class="budget-bar-header">
+          <span class="budget-label">Spending vs Income</span>
+          <span class="budget-percent">{{ spendingPercent | number:'1.0-0' }}% spent</span>
+        </div>
+        <div class="budget-track">
+          <div class="budget-fill" [style.width.%]="spendingPercent" [class.over]="totalExpenses > totalIncome"></div>
+        </div>
+        <div class="budget-bar-footer">
+          <span class="text-income">+{{ formatCurrency(totalIncome) }}</span>
+          <span class="text-expense">-{{ formatCurrency(totalExpenses) }}</span>
+        </div>
+      </div>
+    }
+
+    <!-- Quick Actions -->
+    <div class="quick-actions animate-in">
+      <a routerLink="/add-transaction/expense" class="btn btn-ghost" id="quick-add-transaction">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Add Transaction
+      </a>
+      <a routerLink="/transactions" class="btn btn-ghost" id="quick-view-all">
+        View All Transactions
+      </a>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="section animate-in">
+      <div class="section-header">
+        <h2 class="section-title">Recent Transactions</h2>
+        <a routerLink="/transactions" class="see-all-link">See all</a>
+      </div>
+
+      @if (recentTransactions.length === 0) {
+        <div class="empty-state card">
+          <h3>No transactions yet</h3>
+          <p>Start by adding your first income or expense</p>
+        </div>
+      } @else {
+        <div class="transactions-list card">
+          @for (tx of recentTransactions; track tx._id; let last = $last) {
+            <div class="transaction-item" id="tx-{{ tx._id }}">
+              <div class="tx-details">
+                <div class="tx-category">{{ tx.category }}</div>
+                <div class="tx-desc">{{ tx.description || 'No description' }}</div>
+              </div>
+              <div class="tx-right">
+                <div class="tx-amount" [class.text-income]="tx.expenseType === 'INCOME'" [class.text-expense]="tx.expenseType === 'EXPENSE'">
+                  {{ tx.expenseType === 'INCOME' ? '+' : '-' }}{{ formatCurrency(tx.amount) }}
+                </div>
+                <div class="tx-date">{{ formatDate(tx.date) }}</div>
+              </div>
+            </div>
+            @if (!last) { <div class="divider"></div> }
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
+
+

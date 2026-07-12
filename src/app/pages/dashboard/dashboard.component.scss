@@ -1,0 +1,227 @@
+﻿.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  animation: fadeUp 0.3s ease;
+}
+
+/* --- Header --- */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  .page-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 2px;
+  }
+
+  .page-subtitle { font-size: 0.82rem; color: var(--text-secondary); }
+
+  .month-select { width: 148px; font-size: 0.84rem; }
+}
+
+/* --- Loading --- */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 280px;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+/* --- Summary Grid --- */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.summary-card {
+  padding: 20px;
+  cursor: default;
+
+  &:hover { border-color: var(--border-base); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .card-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--text-muted);
+  }
+
+  .card-label {
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .card-amount {
+    font-size: 1.65rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+
+    &.positive { color: var(--income); }
+    &.negative { color: var(--expense); }
+  }
+
+  .income-amount { color: var(--income); }
+  .expense-amount { color: var(--expense); }
+
+  .card-meta { font-size: 0.76rem; color: var(--text-muted); }
+
+  .savings-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    font-weight: 500;
+    background: var(--income-dim);
+    color: var(--income);
+    border: 1px solid var(--income-border);
+  }
+}
+
+/* --- Budget bar --- */
+.budget-bar-section {
+  padding: 16px 20px;
+
+  &:hover { border-color: var(--border-base); }
+
+  .budget-bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .budget-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .budget-percent { font-size: 0.78rem; color: var(--text-muted); }
+
+  .budget-track {
+    height: 4px;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .budget-fill {
+    height: 100%;
+    background: var(--income);
+    border-radius: var(--radius-full);
+    transition: width 0.8s ease;
+    &.over { background: var(--expense); }
+  }
+
+  .budget-bar-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+}
+
+/* --- Quick Actions --- */
+.quick-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  .btn { font-size: 0.84rem; }
+}
+
+/* --- Section --- */
+.section { display: flex; flex-direction: column; gap: 12px; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .section-title { font-size: 0.92rem; font-weight: 600; }
+  .see-all-link {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    &:hover { color: var(--text-secondary); }
+  }
+}
+
+/* --- Transaction list --- */
+.transactions-list { padding: 0; overflow: hidden; }
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  transition: background var(--ease);
+
+  &:hover { background: var(--bg-hover); }
+
+  .tx-details {
+    flex: 1;
+    min-width: 0;
+    .tx-category { font-size: 0.85rem; font-weight: 500; color: var(--text-primary); }
+    .tx-desc {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .tx-right {
+    text-align: right;
+    flex-shrink: 0;
+    .tx-amount { font-size: 0.88rem; font-weight: 600; }
+    .tx-date { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
+  }
+}
+
+/* --- Responsive --- */
+@media (max-width: 700px) {
+  .dashboard { padding: 14px 12px; gap: 14px; }
+  .page-header { flex-direction: column; }
+  .summary-grid { grid-template-columns: 1fr; gap: 8px; }
+  .summary-card .card-amount { font-size: 1.35rem; }
+}
+
+@media (min-width: 500px) and (max-width: 700px) {
+  .summary-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
