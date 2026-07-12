@@ -8,6 +8,12 @@ import { AuthService } from '../../services/auth.service';
 
 type Tab = 'all' | 'income' | 'expense';
 
+interface TransactionDateGroup {
+  dateKey: string;
+  dateLabel: string;
+  transactions: Transaction[];
+}
+
 @Component({
   selector: 'app-transactions',
   standalone: true,
@@ -23,6 +29,7 @@ export class TransactionsComponent implements OnInit {
   transactionToDelete: Transaction | null = null;
   activeTab: Tab = 'all';
   selectedMonth = '';
+  selectedCategory = '';
 
   months = [
     'January','February','March','April','May','June',
@@ -55,14 +62,69 @@ export class TransactionsComponent implements OnInit {
 
   onMonthChange() { this.loadData(); }
 
+  onCategoryChange() {}
+
+  get categoryOptions(): string[] {
+    const categories = [...this.income, ...this.expenses]
+      .map(t => t.category)
+      .filter(Boolean);
+    return Array.from(new Set(categories)).sort((a, b) => a.localeCompare(b));
+  }
+
   setTab(tab: Tab) { this.activeTab = tab; }
 
   get filteredTransactions(): Transaction[] {
-    let list: Transaction[] = [];
-    if (this.activeTab === 'all') list = [...this.income, ...this.expenses];
-    else if (this.activeTab === 'income') list = this.income;
-    else list = this.expenses;
-    return list.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return this.getTransactionsForTab(this.activeTab)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+
+  get filteredIncome(): Transaction[] {
+    return this.filterByCategory(this.income);
+  }
+
+  get filteredExpenses(): Transaction[] {
+    return this.filterByCategory(this.expenses);
+  }
+
+  get totalFilteredIncome(): number {
+    return this.filteredIncome.reduce((s, t) => s + t.amount, 0);
+  }
+
+  get totalFilteredExpenses(): number {
+    return this.filteredExpenses.reduce((s, t) => s + t.amount, 0);
+  }
+
+  countForTab(tab: Tab): number {
+    return this.getTransactionsForTab(tab).length;
+  }
+
+  private getTransactionsForTab(tab: Tab): Transaction[] {
+    if (tab === 'all') return this.filterByCategory([...this.income, ...this.expenses]);
+    if (tab === 'income') return this.filterByCategory(this.income);
+    return this.filterByCategory(this.expenses);
+  }
+
+  private filterByCategory(transactions: Transaction[]): Transaction[] {
+    if (!this.selectedCategory) return [...transactions];
+    return transactions.filter(t => t.category === this.selectedCategory);
+  }
+
+  get groupedTransactions(): TransactionDateGroup[] {
+    const groups = new Map<string, Transaction[]>();
+
+    for (const transaction of this.filteredTransactions) {
+      const date = new Date(transaction.date);
+      const dateKey = date.toDateString();
+      const transactions = groups.get(dateKey) || [];
+      transactions.push(transaction);
+      groups.set(dateKey, transactions);
+    }
+
+    return Array.from(groups.entries()).map(([dateKey, transactions]) => ({
+      dateKey,
+      dateLabel: this.formatDateGroup(transactions[0].date),
+      transactions
+    }));
   }
 
   get totalIncome(): number { return this.income.reduce((s, t) => s + t.amount, 0); }
@@ -103,9 +165,22 @@ export class TransactionsComponent implements OnInit {
   }
 
   formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  formatDateGroup(date: string): string {
+    return new Date(date).toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
   }
 }
+
+
+
+
 
 
 

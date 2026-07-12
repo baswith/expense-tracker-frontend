@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DashboardData, TrackerService, Transaction } from '../../services/tracker.service';
@@ -19,11 +19,11 @@ export class DashboardComponent implements OnInit {
   selectedYear = new Date().getFullYear();
 
   months = [
-    'January','February','March','April','May','June',
-    'July','August','September','October','November','December'
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  constructor(public auth: AuthService, private tracker: TrackerService) {}
+  constructor(public auth: AuthService, private tracker: TrackerService) { }
 
   ngOnInit() {
     this.selectedMonth = this.months[new Date().getMonth()];
@@ -85,7 +85,7 @@ export class DashboardComponent implements OnInit {
   }
 
   get userName(): string {
-    return this.auth.getUser()?.split('@')[0] || 'there';
+    return (this.auth.getName() || this.auth.getUser()?.split('@')[0]) || 'there';
   }
 
   getGreeting(): string {

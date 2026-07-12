@@ -28,11 +28,11 @@ export class NavbarComponent implements OnInit {
   }
 
   get userInitial(): string {
-    const user = this.auth.getUser();
+    const user = this.auth.getName();
     return user ? user.charAt(0).toUpperCase() : 'U';
   }
 
   get userEmail(): string {
-    return this.auth.getUser() || 'User';
+    return this.auth.getName()||this.auth.getUser()?.split('@')[0] || 'User';
   }
 }
